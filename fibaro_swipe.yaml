@@ -1,0 +1,74 @@
+blueprint:
+  name: "Fibaro Swipe (Z-Wave JS)"
+  description: Create automations for The Swipe by Fibaro using the Z-Wave JS integration.
+  
+  domain: automation
+  input:
+    fibaro_swipe:
+      name: Fibaro Swipe
+      description: List of available Fibaro Swipe Devices
+      selector:
+        device:
+          integration: zwave_js
+          manufacturer: Fibargroup
+          model: FGGC001
+    swipe_up:
+      name: Swipe UP
+      description: Action to run after a swipe UP .
+      default: []
+      selector:
+        action: {}
+    swipe_down:
+      name: Swipe DOWN
+      description: Action to run after a swipe DOWN
+      default: []
+      selector:
+        action: {}
+    swipe_right:
+      name: Swipe RIGHT
+      description: Action to run after a swipe RIGHT.
+      default: []
+      selector:
+        action: {}
+    swipe_left:
+      name: Swipe LEFT
+      description: Action to run after a swipe LEFT.
+      default: []
+      selector:
+        action: {}
+    swipe_turn_right_clockwise:
+      name: Swipe CLOCKWISE
+      description: Action to run after a swipe Clockwise .
+      default: []
+      selector:
+        action: {}
+    swipe_turn_left_anticlockwise:
+      name: Swipe ANTICLOCKWISE
+      description: Action to run after a swipe Anticlockwise.
+      default: []
+      selector:
+        action: {}
+  source_url: http:/djibi.ovh
+mode: single
+max_exceeded: silent
+variables:
+  device_id: !input "fibaro_swipe"
+trigger:
+- platform: device
+  event_type: "zwave_js_value_notification"
+condition: "{{ trigger.event.data.device_id == device_id }}"
+action:
+- variables:
+    property_key: "{{ trigger.event.data.property_key }}"
+    property_name: "{{ trigger.event.data.property_name }}"
+    label: "{{ trigger.event.data.label }}"
+    command_class_name: "{{ trigger.event.data.command_class_name }}"
+    value: "{{ trigger.event.data.value }}"
+    node_id: "{{ trigger.event.data.node_id }}"
+#- service: logbook.log
+#  data:
+#    name: Z-Wave JS
+#    message: "received event from node {{node_id}}: {{ command_class_name }} - {{value }} - {{ label }}"
+- choose:
+  - conditions: "{{ property_name == 'scene' and property_key == '001' and value == 'KeyPressed' }}"
+    sequence: !input "swipe_up"
