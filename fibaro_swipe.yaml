@@ -48,7 +48,7 @@ blueprint:
       default: []
       selector:
         action: {}
-  source_url: http:/djibi.ovh
+  source_url: "https://github.com/dijbi/ha_blueprint_fibaroswipe/blob/main/fibaro_swipe.yaml"
 mode: single
 max_exceeded: silent
 variables:
